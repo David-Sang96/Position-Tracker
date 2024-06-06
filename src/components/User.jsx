@@ -6,8 +6,6 @@ function User() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
-  if (!user) return;
-
   return (
     <div className={styles.user}>
       <img src={user.avatar} alt={user.name} />
