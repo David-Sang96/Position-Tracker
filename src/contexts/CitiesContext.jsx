@@ -42,6 +42,45 @@ const CitiesProvider = ({ children }) => {
     }
   }
 
+  async function createCity(newCity) {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/cities`, {
+        method: "POST",
+        body: JSON.stringify(newCity),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) throw new Error("Something wrong in posting data");
+      const data = await res.json();
+      setCities((cities) => [...cities, data]);
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function deleteCity(cityId) {
+    try {
+      setIsLoading(true);
+      const res = await fetch(
+        `${import.meta.env.VITE_APP_BASE_URL}/cities/${cityId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!res.ok) throw new Error("Something wrong in deleting data");
+
+      setCities((cities) => cities.filter((city) => city.id !== cityId));
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <CitiesContext.Provider
       value={{
@@ -49,6 +88,8 @@ const CitiesProvider = ({ children }) => {
         isLoading,
         currentCity,
         getCity,
+        createCity,
+        deleteCity,
       }}
     >
       {children}

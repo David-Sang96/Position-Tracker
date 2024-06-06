@@ -11,7 +11,7 @@ import { useCities } from "../contexts/CitiesContext";
 import styles from "./CityItem.module.css";
 
 const CityItem = ({ city }) => {
-  const { currentCity } = useCities();
+  const { currentCity, deleteCity } = useCities();
   const { cityName, date, emoji, id, position } = city;
 
   return (
@@ -25,7 +25,15 @@ const CityItem = ({ city }) => {
         <span className={styles.emoji}>{emoji}</span>
         <h1 className={styles.name}>{cityName}</h1>
         <time className={styles.date}>({formatDate(date)})</time>
-        <button className={styles.deleteBtn}>&times;</button>
+        <button
+          className={styles.deleteBtn}
+          onClick={(e) => {
+            e.preventDefault();
+            deleteCity(id);
+          }}
+        >
+          &times;
+        </button>
       </Link>
     </li>
   );
