@@ -1,6 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 const CitiesContext = createContext();
 
@@ -70,24 +76,27 @@ const CitiesProvider = ({ children }) => {
     fetchCities();
   }, []);
 
-  async function getCity(id) {
-    if (Number(id) === currentCity.id) return;
-    dispatch({ type: "loading" });
+  const getCity = useCallback(
+    async function getCity(id) {
+      if (Number(id) === currentCity.id) return;
+      dispatch({ type: "loading" });
 
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_APP_BASE_URL}/cities/${id}`
-      );
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_APP_BASE_URL}/cities/${id}`
+        );
 
-      if (!res.ok) throw new Error("Something wrong in getting city.");
+        if (!res.ok) throw new Error("Something wrong in getting city.");
 
-      const data = await res.json();
-      dispatch({ type: "city/loaded", payload: data });
-    } catch (error) {
-      dispatch({ type: "rejected", payload: error.message });
-      console.error(error.message);
-    }
-  }
+        const data = await res.json();
+        dispatch({ type: "city/loaded", payload: data });
+      } catch (error) {
+        dispatch({ type: "rejected", payload: error.message });
+        console.error(error.message);
+      }
+    },
+    [currentCity.id]
+  );
 
   async function createCity(newCity) {
     dispatch({ type: "loading" });
